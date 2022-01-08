@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,12 +14,19 @@ namespace src
                 .ConfigureFunctionsWorkerDefaults()
                 .ConfigureServices(s =>
                 {
-                    var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["Northwind"];
-                    s.AddTransient<IDbConnection>(_ => new SqlConnection(connectionString.ConnectionString));
+                    s.AddTransient<IDbConnection>(DbConnectionFactoryMethod);
                 })
                 .Build();
 
             host.Run();
+        }
+
+        public static IDbConnection DbConnectionFactoryMethod(IServiceProvider _)
+        {
+            string connectionString = Environment.GetEnvironmentVariable(
+                $"ConnectionStrings:Northwind",
+                EnvironmentVariableTarget.Process);
+            return new SqlConnection(connectionString);
         }
     }
 }
