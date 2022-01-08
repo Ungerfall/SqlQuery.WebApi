@@ -31,10 +31,10 @@ public class ParseSqlQuery
         }
         catch (SqlException e)
         {
-            return Bad(req, $"Invalid Query. Details: {e.Message}");
+            return req.ReturnBad($"Invalid Query. Details: {e.Message}");
         }
 
-        return Ok(req);
+        return req.ReturnOk();
     }
 
     private void SetNoExec()
@@ -51,21 +51,5 @@ public class ParseSqlQuery
         command.CommandType = CommandType.Text;
         command.CommandText = query;
         command.ExecuteNonQuery();
-    }
-
-    private HttpResponseData Bad(HttpRequestData req, string message)
-    {
-        var bad = req.CreateResponse(HttpStatusCode.BadRequest);
-        bad.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-        bad.WriteString(message);
-
-        return bad;
-    }
-
-    private HttpResponseData Ok(HttpRequestData req)
-    {
-        var ok = req.CreateResponse(HttpStatusCode.OK);
-        ok.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-        return ok;
     }
 }
