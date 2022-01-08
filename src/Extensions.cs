@@ -31,4 +31,37 @@ public static class Extensions
 
         return ok;
     }
+
+    public static string ToCsv(this IDataReader sqlReader)
+    {
+        var sb = new StringBuilder();
+
+        var columnNames = Enumerable
+            .Range(0, sqlReader.FieldCount)
+            .Select(sqlReader.GetName)
+            .ToList();
+        var header = string.Join(',', columnNames);
+
+        sb.Append(header);
+        sb.AppendLine();
+        while (sqlReader.Read())
+        {
+            for (int i = 0; i < sqlReader.FieldCount; i++)
+            {
+                string? value = sqlReader[i].ToString();
+                if (value is null)
+                    continue;
+
+                if (value.Contains(","))
+                    value = "\"" + value + "\"";
+
+                sb.Append(value.Replace(Environment.NewLine, " ") + ",");
+            }
+
+            sb.Length--; // Remove the last comma
+            sb.AppendLine();
+        }
+        
+        return sb.ToString();
+    }
 }
