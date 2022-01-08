@@ -23,7 +23,7 @@ namespace src
 
         public static IDbConnection DbConnectionFactoryMethod(IServiceProvider _)
         {
-            string connectionString = Environment.GetEnvironmentVariable(
+            string? connectionString = Environment.GetEnvironmentVariable(
                 $"ConnectionStrings:Northwind",
                 EnvironmentVariableTarget.Process);
             return new SqlConnection(connectionString);

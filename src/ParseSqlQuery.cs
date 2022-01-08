@@ -22,7 +22,12 @@ public class ParseSqlQuery
     {
         _logger.LogInformation("C# HTTP trigger function processed a request.");
 
-        var query = req.ReadAsString(System.Text.Encoding.UTF8);
+        string? query = req.ReadAsString(System.Text.Encoding.UTF8);
+        if (string.IsNullOrEmpty(query))
+        {
+            return req.ReturnOk();
+        }
+
         try
         {
             _dbConnection.Open();
